@@ -9,7 +9,7 @@ export default {
         canvas: '#F4F6F9',    // page background - cool light gray
         slate: '#5B6B85',     // secondary text
         line: '#E2E6ED',      // hairline borders
-        gold: '#B8912F',      // notice-board accent
+        gold: '#B8912F',      
         good: '#2F7A4F',
         warn: '#B8912F',
         bad: '#c84b32',
