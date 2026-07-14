@@ -44,7 +44,6 @@ export default function Billing() {
         prefill: { name: user.full_name, email: user.email },
         theme: { color: '#3762c0' },
         handler: async (response) => {
-          // Step 3: send the payment result back to the backend to verify + record it
           await api.post('/payments/verify', {
             billId,
             razorpay_order_id: response.razorpay_order_id,
