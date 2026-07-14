@@ -8,7 +8,7 @@ export default {
         panel: '#FFFFFF',
         canvas: '#F4F6F9',    // page background - cool light gray
         slate: '#5B6B85',     // secondary text
-        line: '#E2E6ED',      // hairline borders
+        line: '#E2E6ED',      
         gold: '#B8912F',      
         good: '#2F7A4F',
         warn: '#B8912F',
