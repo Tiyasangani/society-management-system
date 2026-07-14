@@ -6,7 +6,7 @@ export default {
       colors: {
         ink: '#1B2A4A',      // deep civic navy - headings, primary text
         panel: '#FFFFFF',
-        canvas: '#F4F6F9',    // page background - cool light gray
+        canvas: '#F4F6F9',   
         slate: '#5B6B85',     
         line: '#E2E6ED',      
         gold: '#B8912F',      
