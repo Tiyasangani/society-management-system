@@ -1,0 +1,339 @@
+{
+  "info": {
+    "name": "Society Management System API",
+    "description": "REST API collection for the Society Management System. Set the `baseUrl` variable (default http://localhost:5000/api) and run 'Login' first — the token is saved automatically to the `token` collection variable and reused by every protected request.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api" },
+    { "key": "rootUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "flatId", "value": "1" },
+    { "key": "billId", "value": "1" },
+    { "key": "complaintId", "value": "1" },
+    { "key": "requestId", "value": "1" },
+    { "key": "announcementId", "value": "1" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (resident)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Ravi Sharma\",\n  \"email\": \"ravi@example.com\",\n  \"phone\": \"9999999998\",\n  \"password\": \"Resident@123\",\n  \"flatId\": {{flatId}}\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "if (data && data.data && data.data.token) {",
+                  "  pm.collectionVariables.set('token', data.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@society.com\",\n  \"password\": \"Admin@123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get my profile",
+          "request": { "method": "GET", "url": "{{baseUrl}}/auth/me" }
+        },
+        {
+          "name": "Update my profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/me",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated Name\",\n  \"phone\": \"9000000000\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Residents",
+      "item": [
+        {
+          "name": "List residents",
+          "request": { "method": "GET", "url": "{{baseUrl}}/residents?search=" }
+        },
+        {
+          "name": "Add resident (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/residents",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"New Resident\",\n  \"email\": \"new.resident@example.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"TempPass@123\",\n  \"flatId\": {{flatId}}\n}"
+            }
+          }
+        },
+        {
+          "name": "Update resident (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/residents/:id",
+            "variable": [{ "key": "id", "value": "1" }],
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"9123456780\"\n}" }
+          }
+        },
+        {
+          "name": "Deactivate resident (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/residents/:id",
+            "variable": [{ "key": "id", "value": "1" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Committee",
+      "item": [
+        { "name": "List committee members", "request": { "method": "GET", "url": "{{baseUrl}}/committee" } },
+        {
+          "name": "Appoint committee member (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/committee",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Secretary Person\",\n  \"email\": \"secretary@example.com\",\n  \"phone\": \"9988776655\",\n  \"password\": \"Committee@123\",\n  \"designation\": \"Secretary\",\n  \"canPublishNotices\": true\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Flats & Buildings",
+      "item": [
+        { "name": "List flats (public)", "request": { "method": "GET", "url": "{{baseUrl}}/flats" } },
+        { "name": "List buildings (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/flats/buildings" } },
+        {
+          "name": "Add building (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/flats/buildings",
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Tower B\",\n  \"totalFloors\": 12\n}" }
+          }
+        },
+        {
+          "name": "Add flat unit (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/flats/units",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"buildingId\": {{flatId}},\n  \"flatNumber\": \"204\",\n  \"floorNumber\": 2,\n  \"areaSqft\": 1100\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Complaints",
+      "item": [
+        {
+          "name": "Raise complaint (resident, with images)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/complaints",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "categoryId", "value": "1", "type": "text" },
+                { "key": "title", "value": "Leaking tap in kitchen", "type": "text" },
+                { "key": "description", "value": "The kitchen tap has been leaking for two days.", "type": "text" },
+                { "key": "priority", "value": "medium", "type": "text" },
+                { "key": "images", "type": "file", "src": [] }
+              ]
+            }
+          }
+        },
+        { "name": "List complaints", "request": { "method": "GET", "url": "{{baseUrl}}/complaints?status=" } },
+        {
+          "name": "Update complaint status (admin/committee)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/complaints/{{complaintId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\",\n  \"remarks\": \"Plumber assigned\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get complaint status history",
+          "request": { "method": "GET", "url": "{{baseUrl}}/complaints/{{complaintId}}/history" }
+        }
+      ]
+    },
+    {
+      "name": "Service Requests",
+      "item": [
+        {
+          "name": "Submit service request (resident)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/service-requests",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceType\": \"Pest control\",\n  \"description\": \"Ants in the kitchen\",\n  \"preferredDate\": \"2026-08-01\"\n}"
+            }
+          }
+        },
+        { "name": "List service requests", "request": { "method": "GET", "url": "{{baseUrl}}/service-requests?status=" } },
+        {
+          "name": "Update service request status (admin/committee)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/service-requests/{{requestId}}/status",
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"approved\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Billing",
+      "item": [
+        {
+          "name": "Create single bill (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/bills",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"flatId\": {{flatId}},\n  \"billingMonth\": \"2026-07-01\",\n  \"amount\": 2500,\n  \"dueDate\": \"2026-07-15\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Bulk generate bills (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/bills/bulk",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"billingMonth\": \"2026-07-01\",\n  \"amount\": 2500,\n  \"dueDate\": \"2026-07-15\"\n}"
+            }
+          }
+        },
+        { "name": "List bills", "request": { "method": "GET", "url": "{{baseUrl}}/bills?status=" } }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Record manual payment (admin/resident)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/payments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"billId\": {{billId}},\n  \"amountPaid\": 2500,\n  \"paymentMethod\": \"cash\"\n}"
+            }
+          }
+        },
+        { "name": "List payments", "request": { "method": "GET", "url": "{{baseUrl}}/payments?billId=" } },
+        {
+          "name": "Create Razorpay order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/payments/create-order",
+            "body": { "mode": "raw", "raw": "{\n  \"billId\": {{billId}}\n}" }
+          }
+        },
+        {
+          "name": "Verify Razorpay payment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/payments/verify",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"billId\": {{billId}},\n  \"razorpay_order_id\": \"order_xxx\",\n  \"razorpay_payment_id\": \"pay_xxx\",\n  \"razorpay_signature\": \"signature_xxx\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Announcements",
+      "item": [
+        { "name": "List announcements", "request": { "method": "GET", "url": "{{baseUrl}}/announcements" } },
+        {
+          "name": "Publish announcement (admin/committee)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/announcements",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Water supply interruption\",\n  \"content\": \"Water supply will be interrupted on Sunday from 10am to 2pm for maintenance.\",\n  \"isUrgent\": true,\n  \"expiresAt\": \"2026-12-31T00:00:00Z\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete announcement (admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/announcements/{{announcementId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        { "name": "Summary (role-aware)", "request": { "method": "GET", "url": "{{baseUrl}}/dashboard/summary" } },
+        { "name": "Audit logs (admin)", "request": { "method": "GET", "url": "{{baseUrl}}/dashboard/audit-logs?page=1&limit=50" } }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        { "name": "API health check", "request": { "method": "GET", "url": "{{rootUrl}}/health" } }
+      ]
+    }
+  ]
+}

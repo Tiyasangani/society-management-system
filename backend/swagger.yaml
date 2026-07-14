@@ -1,0 +1,300 @@
+openapi: 3.0.0
+info:
+  title: Society Management System API
+  version: 1.0.0
+  description: REST API for managing residents, committee members, complaints, service requests, billing, payments, and announcements.
+servers:
+  - url: http://localhost:5000/api
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+paths:
+  /auth/register:
+    post:
+      summary: Register a new resident
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fullName, email, password, flatId]
+              properties:
+                fullName: { type: string }
+                email: { type: string }
+                phone: { type: string }
+                password: { type: string }
+                flatId: { type: integer }
+      responses:
+        '201': { description: Resident registered, returns user + JWT token }
+        '409': { description: Email already registered }
+
+  /auth/login:
+    post:
+      summary: Login (admin, committee, or resident)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200': { description: Returns user + JWT token }
+        '401': { description: Invalid credentials }
+
+  /auth/me:
+    get:
+      summary: Get current authenticated user's profile
+      responses:
+        '200': { description: Current user profile }
+
+  /residents:
+    get:
+      summary: List residents (admin, committee only), supports ?search=&page=&limit=
+      responses:
+        '200': { description: Paginated list of residents }
+    post:
+      summary: Create a resident (admin only)
+      responses:
+        '201': { description: Resident created }
+
+  /residents/{id}:
+    put:
+      summary: Update a resident (admin only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Resident updated }
+    delete:
+      summary: Deactivate a resident (soft delete, admin only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Resident deactivated }
+
+  /committee:
+    get:
+      summary: List committee members
+      responses:
+        '200': { description: List of committee members }
+    post:
+      summary: Appoint a committee member (admin only)
+      responses:
+        '201': { description: Committee member created }
+
+  /complaints:
+    get:
+      summary: List complaints (residents see own; admin/committee see all). Supports ?status=&page=&limit=
+      responses:
+        '200': { description: List of complaints with images and status }
+    post:
+      summary: Raise a complaint with optional image upload (resident only, multipart/form-data)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                categoryId: { type: integer }
+                title: { type: string }
+                description: { type: string }
+                priority: { type: string, enum: [low, medium, high] }
+                images:
+                  type: array
+                  items: { type: string, format: binary }
+      responses:
+        '201': { description: Complaint created }
+
+  /complaints/{id}/status:
+    patch:
+      summary: Update complaint status (admin/committee only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Status updated }
+
+  /complaints/{id}/history:
+    get:
+      summary: Get status change history for a complaint
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Status history list }
+
+  /service-requests:
+    get:
+      summary: List service requests. Supports ?status=&page=&limit=
+      responses:
+        '200': { description: List of service requests }
+    post:
+      summary: Submit a service request (resident only)
+      responses:
+        '201': { description: Service request created }
+
+  /service-requests/{id}/status:
+    patch:
+      summary: Approve/reject/complete a service request (admin/committee only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Status updated }
+
+  /bills:
+    get:
+      summary: List maintenance bills. Supports ?status=&page=&limit=
+      responses:
+        '200': { description: List of bills }
+    post:
+      summary: Create a maintenance bill for a flat (admin only)
+      responses:
+        '201': { description: Bill created }
+
+  /bills/bulk:
+    post:
+      summary: Bulk-generate a bill for every flat for a given month (admin only)
+      responses:
+        '201': { description: Bills generated }
+
+  /payments:
+    get:
+      summary: List payment records. Supports ?billId=&page=&limit=
+      responses:
+        '200': { description: List of payments }
+    post:
+      summary: Record a payment against a bill
+      responses:
+        '201': { description: Payment recorded, bill status updated }
+
+  /announcements:
+    get:
+      summary: List active announcements
+      responses:
+        '200': { description: List of announcements }
+    post:
+      summary: Publish an announcement (admin, or committee with permission)
+      responses:
+        '201': { description: Announcement created }
+
+  /announcements/{id}:
+    delete:
+      summary: Delete an announcement (admin only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Announcement deleted }
+
+  /dashboard/summary:
+    get:
+      summary: Role-aware dashboard summary (different data for resident vs admin/committee)
+      responses:
+        '200': { description: Summary statistics }
+
+  /dashboard/audit-logs:
+    get:
+      summary: List audit logs (admin only)
+      responses:
+        '200': { description: List of audit log entries }
+
+  /flats:
+    get:
+      summary: List all flats (used by registration form)
+      security: []
+      responses:
+        '200': { description: List of flats }
+
+  /flats/buildings:
+    get:
+      summary: List all buildings with flat counts (admin only)
+      responses:
+        '200': { description: List of buildings }
+    post:
+      summary: Add a new building (admin only)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                totalFloors: { type: integer }
+      responses:
+        '201': { description: Building created }
+
+  /flats/units:
+    post:
+      summary: Add a new flat/unit to a building (admin only)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [buildingId, flatNumber]
+              properties:
+                buildingId: { type: integer }
+                flatNumber: { type: string }
+                floorNumber: { type: integer }
+                areaSqft: { type: number }
+      responses:
+        '201': { description: Flat created }
+
+  /payments/create-order:
+    post:
+      summary: Create a Razorpay order for a bill (step 1 of the online payment flow)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [billId]
+              properties:
+                billId: { type: integer }
+      responses:
+        '201': { description: Razorpay order created, returns orderId/amount/keyId }
+
+  /payments/verify:
+    post:
+      summary: Verify a completed Razorpay payment and record it against the bill (step 2)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [billId, razorpay_order_id, razorpay_payment_id, razorpay_signature]
+              properties:
+                billId: { type: integer }
+                razorpay_order_id: { type: string }
+                razorpay_payment_id: { type: string }
+                razorpay_signature: { type: string }
+      responses:
+        '201': { description: Payment verified and recorded, bill status updated }
+        '400': { description: Invalid signature }
