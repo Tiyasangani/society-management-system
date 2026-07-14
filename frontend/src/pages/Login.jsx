@@ -13,7 +13,6 @@ export default function Login() {
       await login(form.email, form.password);
       navigate('/dashboard');
     } catch {
-      // error already set in context
     }
   };
 
