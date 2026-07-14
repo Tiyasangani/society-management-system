@@ -12,7 +12,7 @@ export default {
         gold: '#B8912F',      // notice-board accent
         good: '#2F7A4F',
         warn: '#B8912F',
-        bad: '#B4402A',
+        bad: '#c84b32',
       },
       fontFamily: {
         display: ['"Fraunces"', 'serif'],
