@@ -43,7 +43,7 @@ export default function Billing() {
         name: "Greenview Residents' Society",
         description: 'Maintenance bill payment',
         prefill: { name: user.full_name, email: user.email },
-        theme: { color: '#2563eb' },
+        theme: { color: '#3762c0' },
         handler: async (response) => {
           // Step 3: send the payment result back to the backend to verify + record it
           await api.post('/payments/verify', {
