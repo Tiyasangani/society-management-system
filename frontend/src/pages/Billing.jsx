@@ -31,7 +31,6 @@ export default function Billing() {
 
   const payNow = async (billId) => {
     try {
-      // Step 1: ask the backend to create a Razorpay order for this bill
       const { data } = await api.post('/payments/create-order', { billId });
       const { orderId, amount, currency, keyId } = data.data;
 
