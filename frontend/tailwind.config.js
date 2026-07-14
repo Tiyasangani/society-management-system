@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#1B2A4A',      // deep civic navy - headings, primary text
+        ink: '#1B2A4A',      
         panel: '#FFFFFF',
         canvas: '#F4F6F9',   
         slate: '#5B6B85',     
