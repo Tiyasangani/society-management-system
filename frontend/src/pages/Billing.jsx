@@ -34,7 +34,6 @@ export default function Billing() {
       const { data } = await api.post('/payments/create-order', { billId });
       const { orderId, amount, currency, keyId } = data.data;
 
-      // Step 2: open the Razorpay checkout widget
       const rzp = new window.Razorpay({
         key: keyId,
         amount,
