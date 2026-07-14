@@ -9,7 +9,7 @@ export default {
         canvas: '#F4F6F9',   
         slate: '#5B6B85',     
         line: '#E2E6ED',      
-        gold: '#B8912F',      
+        gold: '#d0a63b',      
         good: '#2F7A4F',
         warn: '#B8912F',
         bad: '#c84b32',
