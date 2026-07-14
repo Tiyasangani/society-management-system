@@ -161,9 +161,6 @@ Push regularly with meaningful commit messages as you extend modules (e.g. `feat
 
 ---
 
-## 10. Known Limitations
+## 10. Payment Gateway
 
-- **Online payments require Razorpay test keys.** `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` in `backend/.env` and `VITE_RAZORPAY_KEY_ID` in `frontend/.env` ship with placeholder values. Without real test keys (free, from https://dashboard.razorpay.com/ → Settings → API Keys → Generate Test Key), the resident-side "Pay ₹X" button will fail with a server error. **As a working alternative that needs no external account, admins can click "Record payment" on the Billing page to log a payment manually (cash/cheque/UPI) — this fully updates bill status and is backed by the same `POST /api/payments` endpoint used by the automated tests and Postman collection.**
-- **No refresh-token rotation flow.** The `refresh_tokens` table exists in the schema for this purpose but isn't wired up yet; JWTs are currently long-lived (`JWT_EXPIRES_IN`, default 7 days) with no revoke-on-logout mechanism.
-- **Seed script is not idempotent for buildings/flats.** Running `npm run seed` more than once will insert duplicate buildings (user seeding is safe via `ON CONFLICT DO NOTHING`, but the building/flat insert isn't guarded). Reset the database if you need a clean slate.
-- **Test suite covers validation, not DB-backed flows.** `npm test` runs without a live database and checks routing/validation/auth-middleware behavior only; it doesn't yet cover full create→read→update flows against real data (see Section 7 for how to extend it).
+This project uses Razorpay for online payments, using the Key ID and Secret set in `backend/.env` and `frontend/.env`.
